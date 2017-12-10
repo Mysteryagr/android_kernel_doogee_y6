@@ -35,6 +35,13 @@ oldconfig: $(obj)/conf
 silentoldconfig: $(obj)/conf
 	$(Q)mkdir -p include/config include/generated
 	$< --$@ $(Kconfig)
+	$(Q)if [ -f ".config" ];then \
+		if [ ! -f "inlcude/generated/hct_auto_define_list.h" ];then \
+			$(srctree)/$(obj)/hct_auto_define.sh $(srctree) ".config" ; \
+		fi ; \
+	else \
+		echo "error: not found .config" ; exit 1; \
+	fi ;
 
 localyesconfig localmodconfig: $(obj)/streamline_config.pl $(obj)/conf
 	$(Q)mkdir -p include/config include/generated
@@ -102,7 +109,14 @@ else
 endif
 
 %_defconfig: $(obj)/conf
-	$(Q)$< --defconfig=arch/$(SRCARCH)/configs/$@ $(Kconfig)
+	$(Q)$< --defconfig=arch/$(SRCARCH)/configs/$@ $(Kconfig) ; \
+	if [ -f ".config" ];then \
+		$(srctree)/$(obj)/hct_auto_define.sh $(srctree) ".config" ; \
+	else \
+		echo "error: not found .config" ; exit 1; \
+	fi ;
+#	stat -c %z .config >> config_log ; 
+	
 
 configfiles=$(wildcard $(srctree)/kernel/configs/$(1).config $(srctree)/arch/$(SRCARCH)/configs/$(1).config)
 
