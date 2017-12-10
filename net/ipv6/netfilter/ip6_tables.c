@@ -758,7 +758,7 @@ check_entry_size_and_hooks(struct ip6t_entry *e,
 			if (!check_underflow(e)) {
 				pr_debug("Underflows must be unconditional and "
 					 "use the STANDARD target with "
-					 "ACCEPT/DROP\n")
+					 "ACCEPT/DROP\n");
 				return -EINVAL;
 			}
 			newinfo->underflow[h] = underflows[h];
